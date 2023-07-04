@@ -1,1 +1,2 @@
 # blackjack
+Blackjack little game
