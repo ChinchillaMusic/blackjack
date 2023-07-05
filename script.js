@@ -53,6 +53,7 @@ const deckOfCards = [
   { order: 51, number: 12, dNumber: "Q", symbol: "♣️" },
   { order: 52, number: 13, dNumber: "K", symbol: "♣️" },
 ]
+
 let cardUsed = []
 let playerPoints = []
 let pcPoints = []
@@ -62,6 +63,8 @@ let playerAces = 0;
 let pcAces = 0;
 let didStand = false;
 let turn = 0;
+let playerSum = 0;
+let pcSum = 0;
 
 //  HTML Elements
 const startDiv = document.getElementById('start-div');
@@ -84,7 +87,7 @@ function createCard(player, displayNum, displaySym) {
     container = deckPC;
   }
   var newElement = document.createElement("div");
-  newElement.classList.add("position-relative", "card", "p-3");
+  newElement.classList.add("position-relative", "card", "p-3", "mx-2");
 
   var topDiv = document.createElement("div");
   topDiv.classList.add("position", "absolute", "top-0", "start-0");
@@ -112,7 +115,7 @@ function createCard(player, displayNum, displaySym) {
 //  Random card 1-52
 let randomCard = function randomNum52() {
   return Math.floor(Math.random() * 52.99);
-}
+};
 
 //  Card have been used or not
 function decideRandomNum() {
@@ -126,7 +129,7 @@ function decideRandomNum() {
 //  Use card and asign values
 function hitACard(player) {
   const randomOrder = decideRandomNum();
-  const drawnCard = deckOfCards.slice[randomOrder - 1];
+  const drawnCard = deckOfCards[randomOrder - 1];
   cardUsed.push(drawnCard.order);
   switch(player) {
     case 1:
@@ -188,9 +191,6 @@ function sumCards(player) {
   return sum;
 }
 
-let playerSum = sumCards(1);
-let pcSum = sumCards(2);
-
 //  Aces for the end of the play
 function haveMoreAce(player) {
   switch (player) {
@@ -200,7 +200,6 @@ function haveMoreAce(player) {
       return pcAces > playerAces;
   }
 }
-
 
 // Restart Function
 function cleanUsed(array) {
@@ -220,18 +219,24 @@ function restart() {
   cleanUsed(pcPoints);
   deleteCardElements('card');
   restartButton.classList.add('d-none');
+  gameDiv.classList.add('d-none');
+  startDiv.classList.remove('d-none');
   didStand = false;
   playerAces = 0;
   pcAces = 0;
+  playerSum = 0;
+  pcSum = 0;
 }
 
 function finalTurn() {
   restartButton.classList.remove('d-none');
-
+  hitButton.classList.add('d-none');
+  standButton.classList.add('d-none');
 }
 
 //  Resolution of a turn
 function resolveTurn() {
+  pcSum = sumCards(2);
   pointsTable.innerHTML = 'Player - ' + playerSum + ' || Computer - ' + pcSum;
   if (playerSum === 21 || (playerSum === 21 && haveMoreAce(1))) {
     alert('Black Jack! You Won!');
@@ -272,6 +277,7 @@ function turnOfPlayer(times) {
 }
 
 function turnOfPC() {
+  pcSum = sumCards(2);
   if (pcSum < 17) {
     const pcCard = hitACard(2);
     createCard(2, pcCard.dNumber, pcCard.symbol);
@@ -284,6 +290,8 @@ function startGame() {
   startDiv.classList.add('d-none');
   gameDiv.classList.remove('d-none');
   pointsTable.classList.remove('d-none');
+  hitButton.classList.remove('d-none');
+  standButton.classList.remove('d-none');
   turnOfPlayer(1);
   turnOfPlayer(2);
   turnOfPC();
@@ -302,7 +310,7 @@ function stand() {
 }
 
 //  Controls
-startButton.onclick = function () { startGame(); }
-hitButton.onclick = function () { hit(); }
-standButton.onclick = function () { stand(); }
-restartButton.onclick = function () { restart(); }
+startButton.onclick = function () { startGame(); };
+hitButton.onclick = function () { hit(); };
+standButton.onclick = function () { stand(); };
+restartButton.onclick = function () { restart(); };
